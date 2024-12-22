@@ -1,2 +1,3 @@
 # config_files_and_scripts
-Wszystkie skrypty, pliki config i dotfiles.
+Repozytorium, w którym przechowywuje swoje pliki konfiguracyjne i skrypty.<br>
+Znajdują się tutaj moje skrypty z różnych miejsc, na przykład: projekty Unity, skrypty poprawiające produktywność etc, konfiguracyjne, dotfiles etc.<br>
