@@ -28,7 +28,7 @@ Action<IConfigContext> doConfig = (context) =>
     // Appearance
     var fontSize = 12;
     var barHeight = 21;
-    var fontName = "JetBrainsMono NF";
+    var fontName = "JetBrains Mono";
     var background = new Color(0x43, 0x4B, 0x5D);
     
     // Gap
@@ -79,7 +79,7 @@ Action<IConfigContext> doConfig = (context) =>
     */
 
     // Workspaces
-    context.WorkspaceContainer.CreateWorkspaces("Main", "Sound", "Productivity", "Projects", "VMs", "Sec+Net", "Play+Talk");
+    context.WorkspaceContainer.CreateWorkspaces("Main", "Sound", "Productivity", "Projects", "VMs", "Security+Settings", "Play+Talk");
     context.CanMinimizeWindows = true;
     
     // Default layouts
@@ -100,7 +100,7 @@ Action<IConfigContext> doConfig = (context) =>
         ("Productivity", defaultLayouts()),
         ("Projects", defaultLayouts()),
         ("VMs", defaultLayouts()),
-        ("Sec+Net", defaultLayouts()),
+        ("Security+Settings", defaultLayouts()),
         ("Play+Talk", defaultLayouts()),
     };
 
@@ -131,12 +131,16 @@ Action<IConfigContext> doConfig = (context) =>
     context.WindowRouter.RouteProcessName("vmware", "VMs");
     context.WindowRouter.RouteProcessName("vmplayer", "VMs");
 
-    context.WindowRouter.RouteProcessName("KeePassXC", "Sec+Net");
-    context.WindowRouter.RouteProcessName("Bitwarden", "Sec+Net");
-    context.WindowRouter.RouteProcessName("Malwarebytes", "Sec+Net");
-    context.WindowRouter.RouteProcessName("Windows Security", "Sec+Net");
-    context.WindowRouter.RouteProcessName("Wireshark", "Sec+Net");
-    context.WindowRouter.RouteProcessName("NextDNS", "Sec+Net");
+    context.WindowRouter.RouteProcessName("KeePassXC", "Security+Settings");
+    context.WindowRouter.RouteProcessName("Bitwarden", "Security+Settings");
+    context.WindowRouter.RouteProcessName("NVIDIA", "Security+Settings");
+    context.WindowRouter.RouteProcessName("NVIDIA app", "Security+Settings");
+    // context.WindowRouter.RouteProcessName("Malwarebytes", "Security+Settings");
+    context.WindowRouter.RouteProcessName("Windows Security", "Security+Settings");
+    context.WindowRouter.RouteProcessName("Zabezpieczenia Windows", "Security+Settings");
+    context.WindowRouter.RouteProcessName("SystemSettings", "Security+Settings");
+    context.WindowRouter.RouteProcessName("Wireshark", "Security+Settings");
+    context.WindowRouter.RouteProcessName("NextDNS", "Security+Settings");
 
     context.WindowRouter.RouteProcessName("steamwebhelper", "Play+Talk");
     context.WindowRouter.RouteProcessName("steam", "Play+Talk");
