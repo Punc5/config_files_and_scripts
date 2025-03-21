@@ -15,6 +15,8 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Timers;
 using System.Linq;
 using workspacer;
 using workspacer.Bar;
@@ -29,14 +31,15 @@ Action<IConfigContext> doConfig = (context) =>
     var fontSize = 12;
     var barHeight = 21;
     var fontName = "JetBrains Mono";
-    var background = new Color(0x43, 0x4B, 0x5D);
-    
+    var background = new Color(102, 22, 22);
+    var foreground = new Color(0, 0, 0);
+
     // Gap
     var gap = barHeight - 13;
     var gapPlugin = context.AddGap(new GapPluginConfig() { InnerGap = gap, OuterGap = gap / 2, Delta = gap / 2 });
 
     // Bar
-     context.AddBar(new BarPluginConfig()
+    context.AddBar(new BarPluginConfig()
     {
         FontSize = fontSize,
         BarHeight = barHeight,
@@ -59,7 +62,7 @@ Action<IConfigContext> doConfig = (context) =>
         {
             new TextWidget("workspacer"),
             new TimeWidget(1000, "| HH:mm:ss ¦ dd-MM-yyyy |"),
-            new ActiveLayoutWidget(),
+            new ActiveLayoutWidget()
         }
     });
     
@@ -79,16 +82,17 @@ Action<IConfigContext> doConfig = (context) =>
     */
 
     // Workspaces
-    context.WorkspaceContainer.CreateWorkspaces("Main", "Sound", "Productivity", "Projects", "VMs", "Security+Settings", "Play+Talk");
+    context.WorkspaceContainer.CreateWorkspaces("Main", "Productivity", "Projects", "VMs", "Security+Settings", "SysMonitoring", "Sound", "Music", "Reading+Watching", "Play+Talk");
+
     context.CanMinimizeWindows = true;
     
     // Default layouts
     Func<ILayoutEngine[]> defaultLayouts = () => new ILayoutEngine[]
     {
-        new TallLayoutEngine(),
-        new VertLayoutEngine(),
-        new HorzLayoutEngine(),
-        new FullLayoutEngine(),
+        // new TallLayoutEngine(),
+        // new VertLayoutEngine(),
+        // new HorzLayoutEngine(),
+        new FullLayoutEngine()
     };
     context.DefaultLayouts = defaultLayouts;
 
@@ -96,24 +100,26 @@ Action<IConfigContext> doConfig = (context) =>
     (string, ILayoutEngine[])[] workspaces =
     {
         ("Main", defaultLayouts()),
-        ("Sound", defaultLayouts()),
         ("Productivity", defaultLayouts()),
         ("Projects", defaultLayouts()),
         ("VMs", defaultLayouts()),
         ("Security+Settings", defaultLayouts()),
+        ("SysMonitoring", defaultLayouts()),
+        ("Sound", defaultLayouts()),
+        ("Music", defaultLayouts()),
+        ("Reading+Watching", defaultLayouts()),
         ("Play+Talk", defaultLayouts()),
     };
 
     // Routes
-    context.WindowRouter.RouteProcessName("SteelSeries", "Sound");
-    context.WindowRouter.RouteProcessName("SteelSeriesGGClient", "Sound");
-    context.WindowRouter.RouteProcessName("Spotify", "Sound");
-
     context.WindowRouter.RouteProcessName("chrome", "Productivity");
     context.WindowRouter.RouteProcessName("vivaldi", "Productivity");
     context.WindowRouter.RouteProcessName("brave", "Productivity");
     context.WindowRouter.RouteProcessName("Tor Browser", "Productivity");
     context.WindowRouter.RouteProcessName("thunderbird", "Productivity");
+    context.WindowRouter.RouteProcessName("localsend_app", "Productivity");
+    context.WindowRouter.RouteProcessName("Obsidian", "Productivity");
+    context.WindowRouter.RouteProcessName("Standard Notes", "Productivity");
 
     context.WindowRouter.RouteProcessName("VSCodium", "Projects");
     context.WindowRouter.RouteProcessName("devenv", "Projects");
@@ -128,11 +134,16 @@ Action<IConfigContext> doConfig = (context) =>
     context.WindowRouter.RouteProcessName("soffice.bin", "Projects");
     context.WindowRouter.RouteProcessName("soffice.exe", "Projects");
 
+    context.WindowRouter.RouteProcessName("Windows Sandbox", "VMs");
+    context.WindowRouter.RouteProcessName("WindowsSandbox", "VMs");
+    context.WindowRouter.RouteProcessName("WindowsSandboxRemoteSession", "VMs");
     context.WindowRouter.RouteProcessName("vmware", "VMs");
     context.WindowRouter.RouteProcessName("vmplayer", "VMs");
 
     context.WindowRouter.RouteProcessName("KeePassXC", "Security+Settings");
     context.WindowRouter.RouteProcessName("Bitwarden", "Security+Settings");
+    context.WindowRouter.RouteProcessName("VeraCrypt", "Security+Settings");
+    context.WindowRouter.RouteProcessName("veracrypt", "Security+Settings");
     context.WindowRouter.RouteProcessName("NVIDIA", "Security+Settings");
     context.WindowRouter.RouteProcessName("NVIDIA app", "Security+Settings");
     // context.WindowRouter.RouteProcessName("Malwarebytes", "Security+Settings");
@@ -141,9 +152,23 @@ Action<IConfigContext> doConfig = (context) =>
     context.WindowRouter.RouteProcessName("SystemSettings", "Security+Settings");
     context.WindowRouter.RouteProcessName("Wireshark", "Security+Settings");
     context.WindowRouter.RouteProcessName("NextDNS", "Security+Settings");
+    context.WindowRouter.RouteProcessName("ProtonVPN", "Security+Settings");
+    context.WindowRouter.RouteProcessName("Proton VPN", "Security+Settings");
+
+    context.WindowRouter.RouteProcessName("OCCT", "SysMonitoring");
+
+    context.WindowRouter.RouteProcessName("SteelSeries", "Sound");
+    context.WindowRouter.RouteProcessName("SteelSeriesGGClient", "Sound");
+    context.WindowRouter.RouteProcessName("Spotify", "Sound");
+
+    context.WindowRouter.RouteProcessName("hakuneko", "Reading+Watching");
+    context.WindowRouter.RouteProcessName("YACReader", "Reading+Watching");
+    context.WindowRouter.RouteProcessName("YACReaderLibrary", "Reading+Watching");
+
 
     context.WindowRouter.RouteProcessName("steamwebhelper", "Play+Talk");
     context.WindowRouter.RouteProcessName("steam", "Play+Talk");
+    context.WindowRouter.RouteProcessName("cs2", "Play+Talk");
     context.WindowRouter.RouteProcessName("Discord", "Play+Talk");
     context.WindowRouter.RouteProcessName("Messenger", "Play+Talk");
     context.WindowRouter.RouteProcessName("ts3client_win64", "Play+Talk");
@@ -153,6 +178,8 @@ Action<IConfigContext> doConfig = (context) =>
     context.WindowRouter.AddFilter((window) => !window.Title.Contains("cs2"));
     context.WindowRouter.AddFilter((window) => !window.Title.Contains("msiexec"));
     context.WindowRouter.AddFilter((window) => !window.Title.Contains("Yubico Authenticator"));
+    context.WindowRouter.AddFilter((window) => !window.Title.Contains("copyq"));
+    context.WindowRouter.AddFilter((window) => !window.Title.Contains("FluentFlyouts"));
 
     // Keybindings
     context.Keybinds.Subscribe(KeyModifiers.Win | KeyModifiers.Control, Keys.M, () =>
